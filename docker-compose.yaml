@@ -1,0 +1,49 @@
+version: '3.8'
+
+services:
+  frontend:
+    build: ./frontend-js
+    ports:
+      - '3000:3000'
+    depends_on:
+      - backend
+      - ai-service
+    volumes:
+      - ./frontend-js:/app
+      - /app/node_modules
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:8080
+      - NEXT_PUBLIC_AI_URL=http://localhost:5000
+
+  backend:
+    build: ./backend-go
+    ports:
+      - '8080:8080'
+    volumes:
+      - ./backend-go:/app
+    environment:
+      - DATABASE_URL=postgres://user:password@db:5432/icord
+
+  ai-service:
+    build: ./ai-service
+    ports:
+      - '5000:5000'
+    volumes:
+      - ./ai-service:/app
+    environment:
+      - MODEL_PATH=/app/model
+
+  db:
+    image: postgres:latest
+    restart: always
+    ports:
+      - '5432:5432'
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: icord
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+volumes:
+  db_data:
