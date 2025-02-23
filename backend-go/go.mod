@@ -1,3 +1,3 @@
-module github.com/DSnohwar/icord
+module github.com/DSnohwar/icord/backend-go
 
-go 1.23.4
+go 1.21
